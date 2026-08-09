@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modpack Tier List</title>
+<style>
+:root{
+  --bg:#0d0d0f;
+  --panel:#151519;
+  --panel-2:#1c1c22;
+  --line:#2a2a33;
+  --text:#e9e9ef;
+  --muted:#8d8d9c;
+  --accent:#7c5cff;
+  --accent-2:#00d4a0;
+  --danger:#ff5c6c;
+  --card-w:158px;
+}
+*{box-sizing:border-box}
+/* Class rules like .btn{display:inline-flex} otherwise beat the UA's
+   [hidden]{display:none}, leaving "hidden" elements on screen. */
+[hidden]{display:none !important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent-2)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1400px;margin:0 auto;padding:20px 20px 80px}
+
+header.top{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 0 18px;
+}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{margin:0;font-size:22px;letter-spacing:-.02em}
+.brand .sub{color:var(--muted);font-size:13px}
+
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{
+  background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+  padding:8px 13px;border-radius:8px;font-size:13.5px;
+  display:inline-flex;align-items:center;gap:7px;transition:.13s;
+  white-space:nowrap;
+}
+.btn:hover{background:#26262f;border-color:#3a3a46}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#6b4bf0}
+.btn.on{background:var(--accent-2);border-color:var(--accent-2);color:#06251d;font-weight:600}
+.btn.danger{color:var(--danger);border-color:#43242b}
+.btn.danger:hover{background:#2a171b}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+
+.search{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;min-width:210px;
+}
+.search:focus{outline:none;border-color:var(--accent);background:#20202a}
+select.search{cursor:pointer}
+
+/* ---------- tier rows ---------- */
+.tiers{border:1px solid var(--line);background:#000}
+.tier{display:flex;align-items:stretch;border-bottom:1px solid #000;min-height:120px}
+.tier:last-child{border-bottom:0}
+
+.tier-label{
+  flex:0 0 162px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  color:#161616;font-weight:400;text-align:center;padding:10px 4px;
+  user-select:none;
+}
+.tier-label .g{font-size:46px;line-height:1;font-weight:400}
+.tier-label .r{font-size:20px;line-height:1.1;font-weight:400;opacity:.82}
+.tier-label .n{font-size:11px;font-weight:600;opacity:.45;margin-top:5px}
+
+.tier-body{
+  flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;
+  padding:8px;background:var(--panel);min-height:120px;
+}
+.tier.drop-target .tier-body{background:#1f2436;box-shadow:inset 0 0 0 2px var(--accent)}
+.tier-empty{
+  color:#4d4d5c;font-size:13px;font-style:italic;
+  display:flex;align-items:center;padding:0 6px;
+}
+
+/* ---------- cards ---------- */
+.card{
+  width:var(--card-w);background:var(--panel-2);border:1px solid var(--line);
+  overflow:hidden;position:relative;
+  transition:transform .12s,border-color .12s,box-shadow .12s;
+  text-align:left;padding:0;display:block;
+}
+.card:hover{transform:translateY(-2px);border-color:#4a4a5a;box-shadow:0 6px 18px #0008}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card.dragging{opacity:.4}
+.card .thumb{
+  width:100%;aspect-ratio:16/9;background:#0a0a0c center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;
+  color:#3f3f4d;font-size:26px;font-weight:800;letter-spacing:-.03em;
+}
+.card .meta{padding:7px 8px 8px}
+.card .nm{
+  font-size:12.5px;font-weight:600;line-height:1.25;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;min-height:2.5em;
+}
+.card .sc{
+  position:absolute;top:5px;right:5px;background:#000000cc;backdrop-filter:blur(2px);
+  border-radius:5px;padding:2px 6px;font-size:11.5px;font-weight:800;
+  border:1px solid #ffffff22;
+}
+.card .flags{position:absolute;top:5px;left:5px;display:flex;gap:3px}
+.card .flag{
+  width:17px;height:17px;border-radius:4px;background:#000000cc;border:1px solid #ffffff22;
+  display:grid;place-items:center;font-size:9px;font-weight:800;
+}
+.card .flag.cf{color:#f16436}
+.card .flag.yt{color:#ff4b45}
+.card .edit-tag{
+  position:absolute;bottom:0;left:0;right:0;background:var(--accent);color:#fff;
+  font-size:10.5px;font-weight:700;text-align:center;padding:2px;
+  opacity:0;transition:.12s;
+}
+body.editing .card{cursor:grab}
+body.editing .card:hover .edit-tag{opacity:1}
+
+/* ---------- stats / footer bar ---------- */
+.statbar{
+  display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;
+  padding:12px 2px 0;
+}
+.statbar b{color:var(--text)}
+
+body.readonly .toolbar{gap:8px}
+body.readonly .card{cursor:pointer}
+
+.hint{
+  color:var(--muted);font-size:13px;background:var(--panel);border:1px solid var(--line);
+  border-left:3px solid var(--accent);border-radius:6px;padding:10px 13px;margin:0 0 14px;
+}
+
+/* ---------- modal ---------- */
+.overlay{
+  position:fixed;inset:0;background:#000000cc;backdrop-filter:blur(3px);
+  display:none;align-items:flex-start;justify-content:center;
+  padding:40px 16px;overflow-y:auto;z-index:50;
+}
+.overlay.open{display:flex}
+.modal{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  width:100%;max-width:660px;box-shadow:0 24px 70px #000c;
+}
+.modal.wide{max-width:820px}
+.modal-head{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:16px 18px;border-bottom:1px solid var(--line);
+}
+.modal-head h2{margin:0;font-size:19px;line-height:1.3;flex:1;letter-spacing:-.01em}
+.modal-body{padding:18px}
+.modal-foot{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  padding:14px 18px;border-top:1px solid var(--line);
+}
+.x{
+  background:none;border:0;color:var(--muted);font-size:24px;line-height:1;
+  padding:0 4px;border-radius:6px;
+}
+.x:hover{color:var(--text)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;border-radius:999px;
+  padding:3px 11px;font-size:12.5px;font-weight:700;color:#161616;
+}
+.tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+
+.embed{
+  aspect-ratio:16/9;width:100%;background:#000;border-radius:9px;overflow:hidden;
+  border:1px solid var(--line);margin-bottom:14px;
+}
+.embed iframe{width:100%;height:100%;border:0;display:block}
+.embed .novid{
+  height:100%;display:grid;place-items:center;color:#4d4d5c;font-size:14px;text-align:center;padding:20px;
+}
+.notes{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+  padding:11px 13px;color:#c8c8d4;font-size:14px;white-space:pre-wrap;margin-top:12px;
+}
+.summary{color:#a9a9ba;font-size:14px;line-height:1.55;margin:12px 0 0}
+.iconstate{
+  display:flex;align-items:center;gap:9px;margin-top:8px;padding:7px 9px;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+  font-size:12.5px;color:var(--muted);
+}
+.iconstate img{width:30px;height:30px;object-fit:contain;background:#0a0a0c;border-radius:5px}
+.iconstate b{color:var(--text)}
+.linkbtn{
+  flex:1;min-width:190px;justify-content:center;font-weight:600;
+  padding:11px 14px;font-size:14px;
+}
+.linkbtn.cf{background:#f16436;border-color:#f16436;color:#fff}
+.linkbtn.cf:hover{background:#d9552a}
+.linkbtn.yt{background:#ff0033;border-color:#ff0033;color:#fff}
+.linkbtn.yt:hover{background:#e00}
+.linkbtn[aria-disabled="true"]{opacity:.35;pointer-events:none}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:8px;padding:9px 11px;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;border-color:var(--accent);background:#20202a
+}
+.field textarea{resize:vertical;min-height:74px;font-family:inherit}
+.field .help{font-size:11.5px;color:#63636f;margin-top:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.mono{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:12.5px}
+.livetier{
+  display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);
+  padding:9px 11px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:#26262f;border:1px solid #3a3a46;color:var(--text);
+  padding:10px 18px;border-radius:9px;font-size:13.5px;
+  opacity:0;pointer-events:none;transition:.2s;z-index:99;box-shadow:0 8px 26px #000a;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:640px){
+  :root{--card-w:104px}
+  .tier-label{flex-basis:104px}
+  .tier-label .g{font-size:34px}
+  .tier-label .r{font-size:15px}
+  .tier-label .n{font-size:10px}
+  .row2{grid-template-columns:1fr}
+  .brand h1{font-size:18px}
+}
+</style>
+</head>
+<body style="">
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1 id="boardTitle">Modpack Tier List</h1>
+      <span class="sub" id="boardSub">click any pack for its CurseForge page &amp; review</span>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="search" type="search" placeholder="Search packs…  ( / )" autocomplete="off">
+      <select class="search" id="sortMode" title="Order inside each tier">
+        <option value="score">Sort: score</option>
+        <option value="name">Sort: name</option>
+        <option value="added">Sort: recently added</option>
+        <option value="custom">Sort: custom (drag)</option>
+      </select>
+      <button class="btn" id="btnEdit" title="Toggle edit mode (E)">✏️ Edit mode</button>
+      <button class="btn primary" id="btnAdd">＋ Add pack</button>
+      <button class="btn" id="btnPaste">📋 Paste list</button>
+      <button class="btn" id="btnFill">⚡ Auto-fill</button>
+      <button class="btn" id="btnData">📤 Share</button>
+    </div>
+  </header>
+
+  <p class="hint" id="editHint" hidden="">
+    <b>Edit mode on.</b> Click a card to edit it · drag a card into another tier to change its score ·
+    drag inside a tier to reorder (switches sort to “custom”).
+  </p>
+
+  <div class="tiers" id="tiers"></div>
+
+  <div class="statbar" id="statbar"></div>
+</div>
+
+<!-- ============ detail modal ============ -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="modal-head">
+      <span class="pill" id="dPill"></span>
+      <h2 id="dTitle"></h2>
+      <button class="x" data-close="" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="embed" id="dEmbed"></div>
+      <div id="dExtra"></div>
+    </div>
+    <div class="modal-foot">
+      <a class="btn linkbtn cf" id="dCf" target="_blank" rel="noopener">Open on CurseForge ↗</a>
+      <a class="btn linkbtn yt" id="dYt" target="_blank" rel="noopener">Watch the review ↗</a>
+      <button class="btn" id="dEditBtn">✏️ Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ edit modal ============ -->
+<div class="overlay" id="editOverlay">
+  <form class="modal" id="editForm" role="dialog" aria-modal="true" aria-labelledby="eTitle">
+    <div class="modal-head">
+      <h2 id="eTitle">Add a modpack</h2>
+      <button type="button" class="x" data-close="" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="fName">Modpack name *</label>
+        <input id="fName" required="" placeholder="Searopolis">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fScore">Score (0–25) *</label>
+          <input id="fScore" type="number" min="0" max="25" step="0.5" required="" placeholder="23">
+        </div>
+        <div class="field">
+          <label>Lands in</label>
+          <div class="livetier" id="fTierPreview">—</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fCf">CurseForge URL</label>
+        <input id="fCf" class="mono" placeholder="https://www.curseforge.com/minecraft/modpacks/…">
+        <div style="display:flex;align-items:center;gap:9px;margin-top:7px;flex-wrap:wrap">
+          <button type="button" class="btn sm" id="fFetch">⤓ Pull icon &amp; version</button>
+          <span class="help" id="fFetchMsg" style="margin:0"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fYt">Review video URL</label>
+        <input id="fYt" class="mono" placeholder="https://www.youtube.com/watch?v=…">
+        <div class="help">YouTube links auto-generate the card thumbnail — no image needed.</div>
+      </div>
+      <div class="field">
+        <label for="fImg">Custom image URL <span style="font-weight:400">(optional)</span></label>
+        <input id="fImg" class="mono" placeholder="leave blank to use the auto icon / video thumbnail">
+        <div class="iconstate" id="fIconState" hidden="">
+          <img id="fIconImg" alt="">
+          <span>Auto icon pulled from <b id="fIconSrc">CurseForge</b></span>
+          <button type="button" class="btn sm" id="fIconClear" style="margin-left:auto">Remove</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fTags">Tags <span style="font-weight:400">(comma separated)</span></label>
+          <input id="fTags" placeholder="kitchen sink, questing, 1.20.1">
+        </div>
+        <div class="field">
+          <label for="fVer">MC version</label>
+          <input id="fVer" placeholder="1.20.1">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fNotes">Notes</label>
+        <textarea id="fNotes" placeholder="What he said about it, standout mods, gripes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="submit" class="btn primary">Save</button>
+      <button type="button" class="btn" data-close="">Cancel</button>
+      <button type="button" class="btn danger" id="fDelete" style="margin-left:auto" hidden="">Delete pack</button>
+    </div>
+  </form>
+</div>
+
+<!-- ============ bulk paste modal ============ -->
+<div class="overlay" id="pasteOverlay">
+  <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+    <div class="modal-head">
+      <h2 id="pTitle">Paste your list</h2>
+      <button class="x" data-close="" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="pText">One modpack per line</label>
+        <textarea id="pText" class="mono" style="min-height:210px" placeholder="Searopolis | 23 | https://www.curseforge.com/minecraft/modpacks/searopolis | https://youtu.be/xxxxxxxxxxx
+Desolate Planet | 22 | https://www.curseforge.com/minecraft/modpacks/desolate-planet
+Some Pack | 19"></textarea>
+        <div class="help">
+          Separate fields with <b>|</b> , a tab, or a comma. Order doesn't matter — URLs and the score are
+          detected automatically, and anything left over becomes the name. Missing fields are fine.
+          Re-pasting a name that already exists updates it instead of duplicating.
+        </div>
+      </div>
+      <div id="pPreview" class="notes" hidden=""></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="pCheck">Preview</button>
+      <button class="btn primary" id="pImport">Import</button>
+      <button class="btn" data-close="">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ backup modal ============ -->
+<div class="overlay" id="dataOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bTitle">
+    <div class="modal-head">
+      <h2 id="bTitle">Share &amp; backup</h2>
+      <button class="x" data-close="" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">
+        <b style="color:var(--accent-2)">Sending it to someone?</b> Use the button below — it writes a
+        <b>new .html file with your list baked inside</b>. They just open it. Sending
+        <code>index.html</code> itself won't work: your packs live in <i>your</i> browser's storage, not
+        in that file, so all anyone else sees is the starter examples.
+      </p>
+      <div class="modal-foot" style="border:0;padding:0 0 14px">
+        <button class="btn primary" id="bShare">📤 Export shareable .html</button>
+      </div>
+
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">
+        <b style="color:var(--accent-2)">Putting it on a website?</b> This build is <b>read-only</b> —
+        visitors can browse, search and open every link, but there are no editing controls at all.
+        Upload the <code>index.html</code> it gives you. To change the list later, either upload a new
+        one, or drop a <code>data.json</code> beside it and the page will use that instead.
+      </p>
+      <div class="modal-foot" style="border:0;padding:0 0 14px">
+        <button class="btn" id="bHost">🌐 Export for hosting (index.html)</button>
+        <button class="btn" id="bData">🗂 Export data.json</button>
+      </div>
+
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">
+        For your own backups, <b>.json</b> is smaller and is what you'd re-import here.
+      </p>
+      <div class="modal-foot" style="border:0;padding:0 0 16px">
+        <button class="btn" id="bExport">⬇ Export .json</button>
+        <button class="btn" id="bImportBtn">⬆ Import .json</button>
+        <input type="file" id="bFile" accept="application/json,.json" hidden="">
+      </div>
+      <div class="field">
+        <label for="bText">…or copy/paste the raw data</label>
+        <textarea id="bText" class="mono" style="min-height:170px" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn primary" id="bApply">Load pasted data</button>
+      <button class="btn" data-close="">Close</button>
+      <button class="btn danger" id="bReset" style="margin-left:auto">Reset everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ auto-fill modal ============ -->
+<div class="overlay" id="fillOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aTitle">
+    <div class="modal-head">
+      <h2 id="aTitle">Auto-fill icons &amp; versions</h2>
+      <button class="x" data-close="" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">
+        Pulls each pack's <b>icon</b>, <b>Minecraft version</b> and a one-line summary so you don't
+        have to type them. Existing values are never overwritten.
+      </p>
+      <p style="margin-top:0;color:var(--muted);font-size:13.5px">
+        <b style="color:var(--accent-2)">No setup needed.</b> Packs with a CurseForge URL are looked up
+        through <b>CFWidget</b> (a free CurseForge mirror) using the exact slug in that URL, so the icon
+        and version come straight from CurseForge. Anything without a CF URL falls back to a
+        <b>Modrinth</b> search by name.
+      </p>
+
+      <details style="margin-bottom:14px">
+        <summary style="cursor:pointer;color:var(--muted);font-size:13px">
+          Advanced: official CurseForge API key (rarely works)
+        </summary>
+      <div class="field" style="margin-top:11px">
+        <label for="aKey">CurseForge API key <span style="font-weight:400">(optional)</span></label>
+        <input id="aKey" class="mono" type="password" placeholder="paste your key here" autocomplete="off">
+        <div style="display:flex;align-items:center;gap:9px;margin-top:7px;flex-wrap:wrap">
+          <button type="button" class="btn sm" id="aTest">Test key</button>
+          <span class="help" id="aTestMsg" style="margin:0"></span>
+        </div>
+        <div class="help">
+          You almost certainly don't need this — CFWidget already covers CurseForge without a key.
+          <br><br>
+          Keys generated at <b>console.curseforge.com</b> are refused by the <code>/v1/mods</code>
+          endpoints with a <b>403</b> unless CurseForge has approved an application for you; their docs
+          direct third-party services to apply separately. A perfectly valid, correctly formatted key
+          will still fail this test. Nothing breaks if it does — auto-fill just uses CFWidget.
+        </div>
+      </div>
+      </details>
+
+      <div class="modal-foot" style="border:0;padding:4px 0 0">
+        <button class="btn primary" id="aRun">⚡ Fill in what's missing</button>
+        <button class="btn" id="aRunAll">Re-fetch everything</button>
+      </div>
+
+      <div id="aLog" class="notes" hidden="" style="max-height:230px;overflow:auto"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" data-close="">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- Filled in by "Export shareable .html" so a copy of this file carries the
+     whole tier list with it. Left as null in the working copy. -->
+<script id="bakedData" type="application/json">{"version":1,"sortMode":"score","exportedAt":1786248191630,"readOnly":true,"packs":[{"id":"p8repemxx","name":"Guild Adventures","score":21,"curseforge":"https://www.curseforge.com/minecraft/modpacks/guild-adventures","video":"https://www.youtube.com/shorts/_C6yLnz529s?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1486/168/256/256/638965784384457163.png","summary":"Highly Stylized, Visceral Action-Combat Adventure!","notes":"","version":"1.21.1","tags":["Modpacks","Adventure and RPG Exploration","Multiplayer","Quests","Magic"],"order":1,"added":1786081444774},{"id":"pziel1rm7","name":"Liminal Industries","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/liminal-industries","video":"https://www.youtube.com/shorts/p7uchGcyQUg?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1295/534/256/256/638842116030409548_animated.gif","summary":"Explore, conquer and industrialise the liminal backrooms with tech and magic","notes":"","version":"1.20.1","tags":["Modpacks","Tech","Exploration","Multiplayer","Map Based","Quests"],"order":2,"added":1786081547058},{"id":"pwok8epo2","name":"Re-Console","score":16,"curseforge":"https://www.curseforge.com/minecraft/modpacks/re-console","video":"https://www.youtube.com/shorts/WjARoDKC0Hs?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1663/904/256/256/639059455280016311.png","summary":"A continued Legacy Console Edition experience, expanded upon with modern Java Edition content and QoL! (An Official Legacy4J Project)","notes":"","version":"26.1.2","tags":["Modpacks","Small / Light","Multiplayer","Vanilla+"],"order":3,"added":1786081706434},{"id":"pvpobo591","name":"Craft to Exile 2","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/craft-to-exile-2","video":"https://www.youtube.com/shorts/gpQrazeehaI?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1135/630/256/256/638697031660257584_animated.gif","summary":"Path of Exile | Diablo | Co-op | Uber Bosses | Maps | VR Support | Steam Deck/Controller Compat.","notes":"","version":"1.20.1","tags":["Modpacks","Adventure and RPG","Exploration","Combat / PvP","Magic","Quests"],"order":4,"added":1786081854204},{"id":"po94j25b8","name":"Linggango","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/linggango","video":"https://www.youtube.com/shorts/vh4M5cnBze4?feature=share","image":"https://media.forgecdn.net/avatars/1898/308/639186447652047298.webp","icon":"","summary":"A Terraria-inspired modpack with a lot unique & custom content!","notes":"","version":"1.20.1","tags":["Modpacks","Adventure and RPG","Exploration","Quests","Magic","Tech"],"order":5,"added":1786082135407},{"id":"p1w8h2dcp","name":"Desertopolis","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/desertopolis","video":"https://www.youtube.com/shorts/ek8OQb68Gmg?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/884/231/256/256/638318279994673553.png","summary":"Desert survival modpack make by BBL","notes":"","version":"1.20.1","tags":["Modpacks","Exploration","Skyblock","Quests","Tech"],"order":6,"added":1786082293268},{"id":"pbci8zuns","name":"Fabulously Optimized","score":13,"curseforge":"https://www.curseforge.com/minecraft/modpacks/fabulously-optimized","video":"https://www.youtube.com/shorts/MTtAU4jXYTY?feature=share","image":"","icon":"https://cdn.modrinth.com/data/1KVo5zza/d8152911f8fd5d7e9a8c499fe89045af81fe816e_96.webp","summary":"Beautiful graphics, speedy performance and familiar features in a simple package. Chaos Cubed beta!","notes":"","version":"26.2","tags":["Modpacks","Small / Light","Exploration","Multiplayer","Vanilla+"],"order":7,"added":1786082375450},{"id":"pw4tev0v3","name":"Seaopolis Submerged 2","score":22,"curseforge":"https://www.curseforge.com/minecraft/modpacks/submerged-2","video":"https://www.youtube.com/shorts/g18pYCDl_-0?feature=share","image":"https://media.forgecdn.net/avatars/thumbnails/1524/820/64/64/638990059693043465.png","icon":"https://media.forgecdn.net/avatars/thumbnails/1524/820/256/256/638990059693043465.png","summary":"An ocean based survival questing modpack. Back for 1.21.1","notes":"","version":"1.21.1","tags":["Modpacks","Multiplayer","Skyblock","Quests","Magic","Tech"],"order":8,"added":1786082518584},{"id":"px81qsr1e","name":"CABIN","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/cabin","video":"https://www.youtube.com/shorts/XXcq1X7ekhw?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/899/846/256/256/638346046780138525.png","summary":"A remaster of the 1.16 pack to newer versions, with new features","notes":"","version":"1.20.1","tags":["Modpacks","Exploration","Quests","Tech"],"order":9,"added":1786082728745},{"id":"pkw5c7stg","name":"NightfallCraft - The Casket of Reveries","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/nightfallcraft-the-casket-of-reveries","video":"https://www.youtube.com/shorts/RB7zT4wmwhc?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1706/161/256/256/639084115489140225_animated.gif","summary":"Souls-like RPG modpack w/ Unique Story Line and Quest!","notes":"","version":"1.20.1","tags":["Modpacks","Adventure and RPG","Exploration","Multiplayer","Quests"],"order":10,"added":1786082864641},{"id":"pequugr47","name":"CordCraft Season 4","score":13,"curseforge":"https://www.curseforge.com/minecraft/modpacks/cordcraft-season-4","video":"https://www.youtube.com/shorts/wTTA8KiTPLs?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1507/406/256/256/638978946247658222.png","summary":"Official Mod Pack for CordCraft Season 4!","notes":"NOTE: server was shut down so if you wish to play with friends you will have to make your own server","version":"1.20.1","tags":["Modpacks","Adventure and RPG","Multiplayer","Tech"],"order":11,"added":1786083011758},{"id":"pqc5tbulh","name":"Homestead - A Cozy Survival Experience","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/homestead-cozy","video":"https://www.youtube.com/shorts/SnTxTeWz4tE?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1336/95/256/256/638868484880282584.png","summary":"Welcome to Homestead, a hand-crafted world brimming with quests to embark on, vibrant landscapes and endless building possibilities. Settle in, explore, and create the cozy life you've always dreamed of!","notes":"","version":"1.20.1","tags":["Modpacks","Vanilla+","Quests","Tech","Exploration","Extra Large"],"order":12,"added":1786083135230},{"id":"pixkmr21k","name":"Over Stars","score":22,"curseforge":"https://www.curseforge.com/minecraft/modpacks/over-stars","video":"https://www.youtube.com/shorts/4c0lBk31uIQ?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1384/614/256/256/638897969899353302_animated.gif","summary":"Challenging Tech-RPG Progression Pack, Unique Quests & Storyline, Tech Ages, Ferocious Bosses, Detailed Worlds, Limitless Adventures","notes":"","version":"1.20.1","tags":[],"order":13,"added":1786085103144},{"id":"pzq85cw4n","name":"Better MC [FABRIC] BMC3","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/better-mc-fabric-bmc3","video":"https://www.youtube.com/shorts/-JjVhefYkaM?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1088/209/256/256/638631037481006863.png","summary":"Version 1.21.1 | Vanilla+ Experience With The Player in Mind | A New Era of Better MC!","notes":"","version":"1.21.1","tags":[],"order":14,"added":1786085136997},{"id":"p2e1fru93","name":"Craftoria","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/craftoria","video":"https://www.youtube.com/shorts/VwWlvS6li3A?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1066/473/256/256/638600434802547442.png","summary":"500+ mods and 2000+ quests featuring tech, magic, automation, exploration, and deep progression with custom content and balanced gameplay","notes":"","version":"1.21.1","tags":[],"order":15,"added":1786085288097},{"id":"puob0rda3","name":"Raspberry Flavoured","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/raspberry-flavoured","video":"https://www.youtube.com/shorts/a_Gv0pqWR_U?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1200/956/256/256/638777566271861932.png","summary":"A modpack focused on exploring, farming & taking things easy... but not too easy!","notes":"","version":"1.19.2","tags":[],"order":16,"added":1786085322254},{"id":"pt1zth0zy","name":"DeceasedCraft - Urban Zombie Apocalypse","score":21,"curseforge":"https://www.curseforge.com/minecraft/modpacks/deceasedcraft","video":"https://www.youtube.com/shorts/uu8f3kkE8Yk?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1577/605/256/256/639022081315858417.png","summary":"Explore, loot and shoot your way through cities overrun by the infected in this zombie apocalypse modpack. Master the tech tree, craft better and stronger equipment, and eventually brave the radioactive Wasteland to find the cure.","notes":"","version":"1.20.1","tags":[],"order":17,"added":1786085355403},{"id":"p4kr7mykv","name":"Desolate Planet - A Crash Landing Remake","score":22,"curseforge":"https://www.curseforge.com/minecraft/modpacks/desolate-planet","video":"https://www.youtube.com/shorts/vJ0If8vb_wY?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1413/412/256/256/638915878698373231.png","summary":"Survive on a desolate planet with limited water, while managing heat and thirst. Progress through the quest tree, learn the secrets of the planet, and build up technology to escape!","notes":"","version":"1.20.1","tags":[],"order":18,"added":1786085385548},{"id":"pi2rxhlwh","name":"Reclamation - Reclaim the World!","score":19,"curseforge":"https://www.curseforge.com/minecraft/modpacks/reclamation-reclaim-the-world","video":"https://www.youtube.com/shorts/6PN9wojgO8k?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1348/184/256/256/638875975751586159.png","summary":"Reclaim the world! A semi-expert modpack about bringing life back to a barren world.","notes":"","version":"1.20.1","tags":[],"order":19,"added":1786085480956},{"id":"pbd88lacw","name":"Abyssal Ascent","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/abyssal-ascent","video":"https://www.youtube.com/shorts/ssY7jAmACcQ?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1085/597/256/256/638627191652602261.png","summary":"A Modpack utilising immersive portals stacking 8 different dimensions vertically, each with their own ecosystem, resources, biodiversity and challenges, and you spawn at the very bottom of this world,.","notes":"","version":"1.20.1","tags":[],"order":20,"added":1786085520690},{"id":"pz4f4kogp","name":"Chocolate Edition Minecraft","score":23,"curseforge":"https://www.curseforge.com/minecraft/modpacks/mc-chocolate-edition","video":"https://www.youtube.com/shorts/8788g9mlKCw?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/902/239/256/256/638350149917518832.png","summary":"1.19.2- Custom Reworked Progression, 45+Balanced Bosses, 100’s of unique areas/mobs to discover, Multiple Endings, Multiplayer and so much more!","notes":"","version":"1.19.2","tags":[],"order":21,"added":1786085543794},{"id":"pklytjrn9","name":"Fresh & Smooth","score":15,"curseforge":"https://www.curseforge.com/minecraft/modpacks/fresh-and-smooth","video":"https://www.youtube.com/shorts/JvN6mAQ2iqc?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1188/607/256/256/638763280346798818.png","summary":"Making Minecraft As Animated, and As Fresh As possible (similar to Actions & Stuff pack)","notes":"","version":"1.21.11","tags":[],"order":22,"added":1786085575218},{"id":"prdzmj8as","name":"Cottage Witch","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/cottage-witch","video":"https://www.youtube.com/shorts/OYZHgc2lZBk?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/623/83/256/256/638016437851477142.png","summary":"A cozy vanilla++ modpack with witchy vibes","notes":"","version":"1.19.2","tags":[],"order":23,"added":1786085627892},{"id":"pa4pujrzo","name":"Ascendra","score":22,"curseforge":"https://www.curseforge.com/minecraft/modpacks/ascendra","video":"https://www.youtube.com/shorts/aOS_OdCQyb8?feature=share","image":"","icon":"","summary":"Start Your Journey into a Magic-Packed, Explorative Modpack | Tough Boss Fights | Overhauled Progression | Immersive Questlines & a Bit of Tech","notes":"","version":"1.20.1","tags":[],"order":24,"added":1786085671172},{"id":"pnranxdk0","name":"All of Create","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/aoc","video":"https://www.youtube.com/shorts/ql4Oa555jts?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/845/271/256/256/638242920825975665.png","summary":"The Ultimate Create Experience | Create 6.0 with 50+ Addons, Quests and Great Performance","notes":"","version":"1.21.1","tags":[],"order":25,"added":1786085701776},{"id":"phojr2p46","name":"DREAD - A Horror Survival Pack","score":16,"curseforge":"https://www.curseforge.com/minecraft/modpacks/dread-arrenek","video":"https://www.youtube.com/shorts/kVHsFFToE8g?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1504/785/256/256/638977225925060212.png","summary":"The most immersive and scariest Horror Modpack for Minecraft, made to make you feel fear and DREAD. Made by Arrenek on YouTube.","notes":"","version":"1.19.2","tags":[],"order":26,"added":1786085736021},{"id":"pa0z60394","name":"Prominence™ II: Hasturian Era","score":19,"curseforge":"https://www.curseforge.com/minecraft/modpacks/prominence-2-hasturian-era","video":"https://www.youtube.com/shorts/2zENksBsocg?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1112/755/256/256/638665111298705796_animated.gif","summary":"Lore-rich RPG modpack built on custom content. Level up and get stronger with the Talent Tree, forge and upgrade your own artifact weapon, and fight powerful bosses to stop the Void’s invasion.","notes":"","version":"1.20.1","tags":[],"order":27,"added":1786085803197},{"id":"plens1i16","name":"Cisco's Fantasy Medieval RPG [Ultimate]","score":9,"curseforge":"https://www.curseforge.com/minecraft/modpacks/ciscos-adventure-rpg-ultimate","video":"https://www.youtube.com/shorts/22w0dfdv_xQ?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1347/122/256/256/638875340907659040.png","summary":"Explore a definitive medieval RPG experience featuring deep custom lore, powerful equipment and handcrafted quests , playable solo or with freinds.","notes":"","version":"1.19.2","tags":[],"order":28,"added":1786085866875},{"id":"p23qzxhgo","name":"Biohazard: Project Genesis - The Ultimate Apocalypse","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/biohazard-project-genesis","video":"https://www.youtube.com/shorts/u5JnXKWr0iM?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1578/117/256/256/639022473651949242_animated.gif","summary":"A groundbreaking apocalyptic modpack blending nuclear fallout with zombie and fungal nightmares. Features deep storyline, advanced weapons, custom crafting system, dynamic difficulty, and multiplayer focus. We are still working in more features!","notes":"","version":"1.20.1","tags":[],"order":29,"added":1786085898111},{"id":"p477g0qeh","name":"Modded Together","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/moddedtogether","video":"https://www.youtube.com/shorts/YoKJEIMxU74?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1912/692/256/256/639193254215798650.png","summary":"Magic, technology and exploration, all designed to work together. Whether you’re playing solo or with friends, every part of the pack is built around meaningful progression and balanced gameplay.","notes":"","version":"1.21.1","tags":[],"order":30,"added":1786085922344},{"id":"p0isfvox6","name":"The Pioneers","score":16,"curseforge":"https://www.curseforge.com/minecraft/modpacks/the-pioneers","video":"https://www.youtube.com/shorts/sE2uTF61yhU?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1064/227/256/256/638597306968461301.webp","summary":"Brave the new worlds. Whether you be a magician, machinist, explorer, or architect, there is something new to discover!","notes":"","version":"1.20.1","tags":[],"order":31,"added":1786085982451},{"id":"pvowjlxoz","name":"One Survival - EVERYBODY IS FIGHTING EACH OTHER [Alpha1]","score":15,"curseforge":"https://www.curseforge.com/minecraft/modpacks/one-survival","video":"https://www.youtube.com/shorts/G22U66o5wPs?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1725/712/256/256/639097983733230230.png","summary":"Everyone is fighting  each other! Better start mining before midnight!","notes":"","version":"1.12.2","tags":[],"order":32,"added":1786086023548},{"id":"pyd3ws2tk","name":"Dungeon Heroes (RPG Series)","score":20,"curseforge":"https://www.curseforge.com/minecraft/modpacks/dungeon-heroes","video":"https://www.youtube.com/shorts/QbU8mKrGdpM?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/939/312/256/256/638419035171069148.png","summary":"⚔️ Explore, Triumph, Loot - Together! - Vanilla+ dungeon crawler","notes":"","version":"1.21.1","tags":[],"order":33,"added":1786086048535},{"id":"penq9ghj4","name":"Society: Sunlit Valley","score":19,"curseforge":"https://www.curseforge.com/minecraft/modpacks/society-sunlit-valley","video":"https://www.youtube.com/shorts/6aEmwQXBB7Y?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1294/569/256/256/638841429067742687.png","summary":"A Stardew Valley experience! In-depth farming, animal raising, and fishing with mechanics straight from the game!","notes":"","version":"1.20.1","tags":[],"order":34,"added":1786086075292},{"id":"p963zi9tl","name":"Beyond Ocean","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/beyond-ocean","video":"https://www.youtube.com/shorts/9r4qpspSjyk?feature=share","image":"","icon":"","summary":"Ocean Survival Modpack | Explore | Dive into the unknown | Survive","notes":"","version":"1.20.1","tags":[],"order":35,"added":1786086101397},{"id":"p0tezz8f3","name":"Exosphere 2","score":21,"curseforge":"https://www.curseforge.com/minecraft/modpacks/bm-exosphere-2","video":"https://www.youtube.com/shorts/XhpE9ChXSuY?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1741/84/256/256/639108409294863145.jpg","summary":"Versatile pack on unique sky islands, full of quests and new movement!","notes":"","version":"1.21.1","tags":[],"order":36,"added":1786086142487},{"id":"pw42smy1m","name":"Menagerie - a zoo modpack","score":24,"curseforge":"https://www.curseforge.com/minecraft/modpacks/menagerie","video":"https://www.youtube.com/shorts/N83wq9wt88c?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/985/66/256/256/638494284643838339.png","summary":"Light-questing, building and exploration pack about building a ZOO! 🐾🪴","notes":"","version":"1.20.1","tags":[],"order":37,"added":1786086172504},{"id":"prppz0yhe","name":"Beyond Tides","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/beyond-tides","video":"https://www.youtube.com/shorts/gLQ_-rbg_JY?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1792/207/256/256/639135514421714787_animated.gif","summary":"A core medieval pirate themed survival enhancement pack made for your forever world.","notes":"","version":"1.20.1","tags":[],"order":38,"added":1786086217111},{"id":"pkw1amo3l","name":"Satisfaction Guaranteed","score":15,"curseforge":"https://www.curseforge.com/minecraft/modpacks/satisfaction-guaranteed","video":"https://www.youtube.com/shorts/HzEBlnuBF8s?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1722/675/256/256/639095926680417793.png","summary":"A complete visual and auditory Minecraft overhaul capable of connecting to any vanilla-compatible server.","notes":"","version":"26.1.2","tags":[],"order":39,"added":1786086248792},{"id":"pyh5odqh9","name":"Arcadia [RPG]","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/arcadia-rpg","video":"https://www.youtube.com/shorts/u9nsodjO_T0?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1100/689/256/256/638648100373130442.png","summary":"Arcadia is a fully immersive RPG experience with a personal quest book to the greater glory! ","notes":"","version":"1.20.1","tags":[],"order":40,"added":1786086271631},{"id":"pf0dk2bwv","name":"Infinite Horizons - Modded Superflat Survival","score":21,"curseforge":"https://www.curseforge.com/minecraft/modpacks/modded-super-flat-survival","video":"https://www.youtube.com/shorts/NcSwrkB0wp8?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1593/483/256/256/639030507802834553.png","summary":"A modded superflat experience","notes":"","version":"1.21.1","tags":[],"order":41,"added":1786086313519},{"id":"pp6f97tai","name":"Cozy Zen","score":17,"curseforge":"https://www.curseforge.com/minecraft/modpacks/cozy-zen","video":"https://www.youtube.com/shorts/ZALkeZSlpDI?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1960/456/256/256/639213125451834570.png","summary":"A cozy vanilla plus modpack that enhances decorating and building, deepens farming and fishing with dozens of friendly new creatures, and expands exploration with richer biomes and structures for relaxing solo nights or casual adventures with a friend.","notes":"","version":"1.20.1","tags":[],"order":42,"added":1786086338968},{"id":"pfye44mhk","name":"ZOMBIEMANIA - A Modern Zombie Apocalypse","score":18,"curseforge":"https://www.curseforge.com/minecraft/modpacks/zombiemania","video":"https://www.youtube.com/shorts/odM0IwPYz3E?feature=share","image":"","icon":"https://media.forgecdn.net/avatars/thumbnails/1854/104/256/256/639165491163621475_animated.gif","summary":"This modpack is a highly realistic zombie apocalypse experience. They hear your voices. They react to your gunshots. And they smell your blood. Set in a bleak, wintry world, survival is more than a challenge — it’s a nightmare.","notes":"","version":"1.20.1","tags":[],"order":43,"added":1786086361997}]}</script>
+
+<script>
+"use strict";
+
+/* ============================================================
+   Tier definitions — score bands straight off the tier list.
+   Edit min/max here if he ever changes the rubric.
+   ============================================================ */
+const TIERS = [
+  { id:"S", min:22, max:25, color:"#ff7f7f" },
+  { id:"A", min:18, max:21, color:"#ffbf7f" },
+  { id:"B", min:14, max:17, color:"#ffdf7f" },
+  { id:"C", min:10, max:13, color:"#ffff7f" },
+  { id:"D", min:5,  max:9,  color:"#bfff7f" },
+  { id:"F", min:0,  max:4,  color:"#7fff7f" },
+];
+
+const STORE_KEY = "modpack-tierlist-v1";
+
+/* Seed rows so the board isn't blank on first open.
+   Delete them once you've pasted your own list. */
+const SEED = [
+  { name:"Desolate Planet", score:23, cf:"https://www.curseforge.com/minecraft/modpacks/desolate-planet" },
+  { name:"All the Mods 9",  score:20, cf:"https://www.curseforge.com/minecraft/modpacks/all-the-mods-9" },
+  { name:"RLCraft",         score:17, cf:"https://www.curseforge.com/minecraft/modpacks/rlcraft" },
+  { name:"Better MC",       score:12, cf:"https://www.curseforge.com/minecraft/modpacks/better-mc-forge-bmc4" },
+  { name:"SkyFactory 4",    score:8,  cf:"https://www.curseforge.com/minecraft/modpacks/skyfactory-4" },
+];
+
+/* ============================================================
+   State
+
+   `readOnly` is set by "Export for hosting". A published build shows the tier
+   list and its links but hides every editing control, so anyone who finds the
+   URL can browse it and nothing more.
+   ============================================================ */
+let readOnly = false;
+let state;
+
+function blankState(){
+  return {
+    version: 1,
+    sortMode: "score",
+    exportedAt: 0,
+    packs: SEED.map((s,i) => makePack({
+      name:s.name, score:s.score, curseforge:s.cf, order:i, added:Date.now()+i
+    })),
+  };
+}
+
+function makePack(p){
+  return {
+    id: p.id || ("p" + Math.random().toString(36).slice(2,10)),
+    name: p.name || "Untitled",
+    score: clampScore(p.score),
+    curseforge: p.curseforge || "",
+    video: p.video || "",
+    image: p.image || "",     // manual override, wins over everything
+    icon: p.icon || "",       // auto-pulled from CurseForge/Modrinth
+    summary: p.summary || "", // auto-pulled one-liner
+    notes: p.notes || "",
+    version: p.version || "",
+    tags: Array.isArray(p.tags) ? p.tags : [],
+    order: Number.isFinite(p.order) ? p.order : 0,
+    added: p.added || Date.now(),
+  };
+}
+
+function clampScore(v){
+  const n = parseFloat(v);
+  if (!Number.isFinite(n)) return 0;
+  return Math.min(25, Math.max(0, n));
+}
+
+function normalize(parsed){
+  return {
+    version: 1,
+    sortMode: parsed.sortMode || "score",
+    exportedAt: parsed.exportedAt || 0,
+    readOnly: !!parsed.readOnly,
+    packs: parsed.packs.map(makePack),
+  };
+}
+
+/** Data baked into this file by "Export shareable .html", if any. */
+function bakedState(){
+  const el = document.getElementById("bakedData");
+  const txt = (el?.textContent || "").trim();
+  if (!txt || txt === "null") return null;
+  try{
+    const parsed = JSON.parse(txt);
+    return parsed && Array.isArray(parsed.packs) ? normalize(parsed) : null;
+  }catch(err){
+    console.warn("Baked-in list is corrupt, ignoring it.", err);
+    return null;
+  }
+}
+
+function load(){
+  let stored = null;
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (parsed && Array.isArray(parsed.packs)) stored = normalize(parsed);
+  }catch(err){
+    console.warn("Could not read saved list.", err);
+  }
+
+  const baked = bakedState();
+
+  // A published read-only build is the single source of truth — a visitor's
+  // leftover storage from an earlier visit must never shadow it.
+  if (baked && baked.readOnly) return baked;
+
+  // A freshly shared copy should win over whatever the viewer happens to have
+  // saved from an older copy — but their own later edits must survive reopening,
+  // hence comparing export stamps rather than always preferring one side.
+  if (baked && (!stored || baked.exportedAt > stored.exportedAt)) return baked;
+  return stored || blankState();
+}
+
+function save(){
+  if (readOnly) return;   // published builds never write to a visitor's browser
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }catch(err){
+    toast("Couldn't save — browser storage is full or blocked.");
+  }
+}
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const $  = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => (
+    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]
+  ));
+}
+
+/* TIERS is ordered best -> worst, so the first band whose floor the score clears
+   wins. Matching on `min` alone (rather than min..max) means half-point scores
+   like 21.5 round up into A instead of falling through the gap between bands. */
+function tierFor(score){
+  return TIERS.find(t => score >= t.min) || TIERS[TIERS.length-1];
+}
+
+function fmtScore(n){
+  return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+/** Pull a YouTube video id out of watch / youtu.be / shorts / embed / live URLs. */
+function ytId(url){
+  if (!url) return "";
+  const m = String(url).match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+  );
+  return m ? m[1] : "";
+}
+
+/* Card art priority: manual override > auto-pulled project icon > video thumbnail.
+   Project icons are square, so they get `contain` inside the 16:9 tile; photos and
+   video thumbnails fill it with `cover`. */
+function thumbFor(pack){
+  if (pack.image) return { url: pack.image, fit: "cover" };
+  if (pack.icon)  return { url: pack.icon,  fit: "contain" };
+  const id = ytId(pack.video);
+  return id
+    ? { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`, fit: "cover" }
+    : { url: "", fit: "cover" };
+}
+
+/** Safe external link: only allow http(s), otherwise treat as absent. */
+function safeUrl(url){
+  if (!url) return "";
+  try{
+    const u = new URL(url, location.href);
+    return (u.protocol === "http:" || u.protocol === "https:") ? u.href : "";
+  }catch{ return ""; }
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+let toastTimer;
+function toast(msg){
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+/* ============================================================
+   Auto-fill: pull icon + MC version from CurseForge / Modrinth
+
+   CurseForge's own API is the accurate source (it matches on the exact slug in
+   the URL you already pasted) but needs a free API key. Modrinth needs no key
+   and allows any origin, so it's the fallback — it matches on name, so results
+   are sanity-checked against the pack name before being trusted.
+   Scraping curseforge.com directly is not an option: Cloudflare blocks it.
+   ============================================================ */
+const CF_KEY_STORE = "modpack-tierlist-cfkey";
+const CF_GAME_MINECRAFT = 432;
+const CF_CLASS_MODPACKS = 4471;
+
+/* Set once CurseForge turns the key down, so we stop retrying it on every pack
+   and can warn the user once instead of per-row. Cleared when the key changes. */
+let cfKeyRejected = false;
+
+const cfKey    = () => localStorage.getItem(CF_KEY_STORE) || "";
+const setCfKey = k  => {
+  cfKeyRejected = false;
+  if (k) localStorage.setItem(CF_KEY_STORE, k);
+  else   localStorage.removeItem(CF_KEY_STORE);
+};
+
+/** Pull the project slug out of a CurseForge modpack URL. */
+function cfSlug(url){
+  const m = String(url || "").match(/curseforge\.com\/minecraft\/modpacks\/([A-Za-z0-9._-]+)/i);
+  return m ? m[1] : "";
+}
+
+function cmpVer(a, b){
+  const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++){
+    const d = (pa[i] || 0) - (pb[i] || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+
+/** Highest plain Minecraft version out of a messy list (ignores "Forge", "Fabric", etc.). */
+function highestMc(list){
+  const mc = [...new Set(list)].filter(v => /^\d+\.\d+(\.\d+)?$/.test(v)).sort(cmpVer);
+  return mc.length ? mc[mc.length - 1] : "";
+}
+
+async function fetchCurseForge(slug){
+  const key = cfKey();
+  if (!key) throw new Error("no-key");
+  const url = `https://api.curseforge.com/v1/mods/search`
+            + `?gameId=${CF_GAME_MINECRAFT}&classId=${CF_CLASS_MODPACKS}&slug=${encodeURIComponent(slug)}`;
+  const res = await fetch(url, { headers: { "x-api-key": key, Accept: "application/json" } });
+  if (res.status === 403 || res.status === 401) throw new Error("bad-key");
+  if (!res.ok) throw new Error("http-" + res.status);
+
+  const mod = (await res.json())?.data?.[0];
+  if (!mod) throw new Error("not-found");
+
+  const versions = [];
+  (mod.latestFilesIndexes || []).forEach(f => f.gameVersion && versions.push(f.gameVersion));
+  (mod.latestFiles || []).forEach(f => (f.gameVersions || []).forEach(v => versions.push(v)));
+
+  return {
+    source:  "CurseForge",
+    name:    mod.name || "",
+    icon:    mod.logo?.url || mod.logo?.thumbnailUrl || "",
+    version: highestMc(versions),
+    summary: mod.summary || "",
+  };
+}
+
+async function fetchModrinth(query){
+  const facets = encodeURIComponent(JSON.stringify([["project_type:modpack"]]));
+  const url = `https://api.modrinth.com/v2/search`
+            + `?query=${encodeURIComponent(query)}&facets=${facets}&limit=1`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("http-" + res.status);
+
+  const hit = (await res.json())?.hits?.[0];
+  if (!hit) throw new Error("not-found");
+
+  return {
+    source:  "Modrinth",
+    name:    hit.title || "",
+    icon:    hit.icon_url || "",
+    version: highestMc(hit.versions || []),
+    summary: hit.description || "",
+  };
+}
+
+/**
+ * CFWidget — a free, keyless CurseForge mirror. This is the primary source:
+ * it matches on the exact slug from the pack's own CurseForge URL (so no
+ * guessing) and returns the real CurseForge icon, with no API key involved.
+ */
+async function fetchCfWidget(slug, { retry = true } = {}){
+  const res = await fetch(`https://api.cfwidget.com/minecraft/modpacks/${encodeURIComponent(slug)}`);
+
+  // 202 = not cached yet; CFWidget queues the project and serves it shortly.
+  if (res.status === 202){
+    if (!retry) throw new Error("queued");
+    await sleep(3500);
+    return fetchCfWidget(slug, { retry: false });
+  }
+  if (res.status === 404) throw new Error("not-found");
+  if (!res.ok) throw new Error("http-" + res.status);
+
+  const d = await res.json();
+  if (!d || !d.title) throw new Error("not-found");
+
+  return {
+    source:  "CurseForge",
+    name:    d.title,
+    icon:    d.thumbnail || "",
+    version: highestMc(Object.keys(d.versions || {})),
+    summary: d.summary || "",
+  };
+}
+
+/** Ask CurseForge directly whether the saved key is accepted. */
+async function testCfKey(){
+  if (!cfKey()) return { ok:false, msg:"No key entered." };
+  try {
+    const hit = await fetchCurseForge("desolate-planet");
+    cfKeyRejected = false;
+    return { ok:true, msg:`Key works — found “${hit.name}”.` };
+  } catch (err){
+    if (err.message === "not-found"){
+      cfKeyRejected = false;           // auth passed, the test pack just moved
+      return { ok:true, msg:"Key works (auth accepted)." };
+    }
+    if (err.message === "bad-key"){
+      cfKeyRejected = true;
+      return { ok:false, msg:"CurseForge rejected this key (403) — see the note below." };
+    }
+    return { ok:false, msg:`Couldn't reach CurseForge (${err.message}).` };
+  }
+}
+
+/** Loose name comparison, so a Modrinth guess isn't blindly trusted. */
+function nameMatches(a, b){
+  const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const x = norm(a), y = norm(b);
+  return !!x && !!y && (x.includes(y) || y.includes(x));
+}
+
+/**
+ * Look a pack up. CurseForge first when we have a key and a slug, else Modrinth.
+ * `strict` (used by bulk fill) rejects fuzzy Modrinth matches that don't look
+ * like the pack we asked about.
+ */
+async function lookupPack(pack, { strict = false } = {}){
+  const slug = cfSlug(pack.curseforge);
+
+  if (slug){
+    // 1. CFWidget: keyless and exact-slug matched, so it's tried first.
+    try {
+      return await fetchCfWidget(slug);
+    } catch (err){
+      if (err.message !== "not-found" && err.message !== "queued") {
+        console.warn("CFWidget lookup failed:", err.message);
+      }
+    }
+
+    // 2. Official CurseForge API, if the user has a key that works.
+    //    (Self-serve keys are usually refused — see the note in ⚡ Auto-fill.)
+    if (cfKey() && !cfKeyRejected){
+      try {
+        return await fetchCurseForge(slug);
+      } catch (err){
+        // A rejected key must never be *worse* than having no key, so we note
+        // it and carry on rather than failing the whole lookup.
+        if (err.message === "bad-key") cfKeyRejected = true;
+      }
+    }
+  }
+
+  // 3. Modrinth by name — last resort, and the only option with no CF URL.
+  const query = pack.name || slug.replace(/[-_]/g, " ");
+  if (!query) throw new Error("nothing-to-search");
+
+  const hit = await fetchModrinth(query);
+  if (strict && !nameMatches(hit.name, query)) throw new Error("no-confident-match");
+  return hit;
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+function visiblePacks(){
+  const q = $("#search").value.trim().toLowerCase();
+  if (!q) return state.packs;
+  return state.packs.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.tags.join(" ").toLowerCase().includes(q) ||
+    (p.version || "").toLowerCase().includes(q) ||
+    (p.notes  || "").toLowerCase().includes(q)
+  );
+}
+
+function sortPacks(list){
+  const mode = state.sortMode;
+  const arr = [...list];
+  if (mode === "name")  arr.sort((a,b) => a.name.localeCompare(b.name));
+  else if (mode === "added")  arr.sort((a,b) => b.added - a.added);
+  else if (mode === "custom") arr.sort((a,b) => a.order - b.order);
+  else arr.sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+  return arr;
+}
+
+function render(){
+  const shown = visiblePacks();
+  const host  = $("#tiers");
+  host.innerHTML = "";
+
+  for (const tier of TIERS){
+    const inTier = sortPacks(shown.filter(p => tierFor(p.score).id === tier.id));
+    const total  = state.packs.filter(p => tierFor(p.score).id === tier.id).length;
+
+    const row = document.createElement("div");
+    row.className = "tier";
+    row.dataset.tier = tier.id;
+
+    const label = document.createElement("div");
+    label.className = "tier-label";
+    label.style.background = tier.color;
+    label.innerHTML =
+      `<span class="g">${tier.id}</span>` +
+      `<span class="r">${tier.min}–${tier.max}</span>` +
+      `<span class="n">${total} pack${total === 1 ? "" : "s"}</span>`;
+
+    const body = document.createElement("div");
+    body.className = "tier-body";
+
+    if (!inTier.length){
+      const empty = document.createElement("div");
+      empty.className = "tier-empty";
+      empty.textContent = shown.length === state.packs.length
+        ? "nothing here yet"
+        : "no matches in this tier";
+      body.appendChild(empty);
+    } else {
+      inTier.forEach(p => body.appendChild(cardEl(p)));
+    }
+
+    row.append(label, body);
+    host.appendChild(row);
+  }
+
+  renderStats();
+  wireDnD();
+}
+
+function cardEl(pack){
+  const el = document.createElement("button");
+  el.type = "button";
+  el.className = "card";
+  el.dataset.id = pack.id;
+  el.title = pack.name;
+
+  const art  = thumbFor(pack);
+  const cf   = safeUrl(pack.curseforge);
+  const vid  = safeUrl(pack.video);
+  const init = pack.name.trim().slice(0,2).toUpperCase() || "??";
+  const artStyle = art.url
+    ? ` style="background-image:url('${esc(art.url)}');background-size:${art.fit}"`
+    : "";
+
+  el.innerHTML = `
+    <div class="thumb"${artStyle}>${art.url ? "" : esc(init)}</div>
+    <div class="sc">${fmtScore(pack.score)}</div>
+    <div class="flags">
+      ${cf  ? '<span class="flag cf" title="Has CurseForge link">CF</span>' : ""}
+      ${vid ? '<span class="flag yt" title="Has review video">▶</span>'     : ""}
+    </div>
+    <div class="meta"><div class="nm">${esc(pack.name)}</div></div>
+    <div class="edit-tag">edit</div>
+  `;
+
+  el.addEventListener("click", () => {
+    if (!readOnly && document.body.classList.contains("editing")) openEdit(pack.id);
+    else openDetail(pack.id);
+  });
+  return el;
+}
+
+function renderStats(){
+  const packs = state.packs;
+  const n = packs.length;
+  const avg = n ? packs.reduce((s,p) => s + p.score, 0) / n : 0;
+  const missing = packs.filter(p => !safeUrl(p.curseforge) || !safeUrl(p.video)).length;
+  const q = $("#search").value.trim();
+  const shownCount = visiblePacks().length;
+
+  $("#statbar").innerHTML =
+    `<span><b>${n}</b> packs tracked</span>` +
+    `<span>average score <b>${n ? avg.toFixed(1) : "—"}</b> / 25</span>` +
+    (missing ? `<span><b>${missing}</b> missing a link</span>` : `<span>all links filled in ✓</span>`) +
+    (q ? `<span><b>${shownCount}</b> matching “${esc(q)}”</span>` : "");
+}
+
+/* ============================================================
+   Detail modal
+   ============================================================ */
+let detailId = null;
+
+function openDetail(id){
+  const p = state.packs.find(x => x.id === id);
+  if (!p) return;
+  detailId = id;
+
+  const tier = tierFor(p.score);
+  const pill = $("#dPill");
+  pill.textContent = `${tier.id} · ${fmtScore(p.score)}/25`;
+  pill.style.background = tier.color;
+
+  $("#dTitle").textContent = p.name;
+
+  const vid = ytId(p.video);
+  const embed = $("#dEmbed");
+  if (vid){
+    const frame = document.createElement("iframe");
+    frame.src = `https://www.youtube-nocookie.com/embed/${vid}`;
+    frame.allow = "accelerometer; clipboard-write; encrypted-media; picture-in-picture";
+    frame.allowFullscreen = true;
+    frame.title = `${p.name} review`;
+    embed.replaceChildren(frame);
+  } else {
+    const art = thumbFor(p);
+    embed.innerHTML = art.url
+      ? `<div class="novid" style="background:#000 center/contain no-repeat url('${esc(art.url)}')"></div>`
+      : `<div class="novid">No review video linked yet.<br>Turn on edit mode to add one.</div>`;
+  }
+
+  const bits = [];
+  if (p.version) bits.push(`<span class="tag">MC ${esc(p.version)}</span>`);
+  p.tags.forEach(t => bits.push(`<span class="tag">${esc(t)}</span>`));
+  $("#dExtra").innerHTML =
+    (bits.length   ? `<div class="tagrow">${bits.join("")}</div>` : "") +
+    (p.summary     ? `<p class="summary">${esc(p.summary)}</p>`   : "") +
+    (p.notes       ? `<div class="notes">${esc(p.notes)}</div>`   : "");
+
+  setLink($("#dCf"), safeUrl(p.curseforge), "Open on CurseForge ↗", "No CurseForge link");
+  setLink($("#dYt"), safeUrl(p.video),      "Watch the review ↗",   "No video link");
+
+  open$("#detailOverlay");
+}
+
+function setLink(el, href, okText, offText){
+  if (href){
+    el.href = href;
+    el.textContent = okText;
+    el.setAttribute("aria-disabled","false");
+  } else {
+    el.removeAttribute("href");
+    el.textContent = offText;
+    el.setAttribute("aria-disabled","true");
+  }
+}
+
+/* ============================================================
+   Edit modal
+   ============================================================ */
+let editingId = null;
+let pendingIcon = "";      // auto-pulled icon awaiting Save
+let pendingSummary = "";
+
+function openEdit(id){
+  editingId = id || null;
+  const p = id ? state.packs.find(x => x.id === id) : null;
+
+  pendingIcon    = p ? p.icon : "";
+  pendingSummary = p ? p.summary : "";
+  $("#fFetchMsg").textContent = "";
+  showIconState(pendingIcon, "");
+
+  $("#eTitle").textContent = p ? "Edit modpack" : "Add a modpack";
+  $("#fName").value  = p ? p.name : "";
+  $("#fScore").value = p ? p.score : "";
+  $("#fCf").value    = p ? p.curseforge : "";
+  $("#fYt").value    = p ? p.video : "";
+  $("#fImg").value   = p ? p.image : "";
+  $("#fTags").value  = p ? p.tags.join(", ") : "";
+  $("#fVer").value   = p ? p.version : "";
+  $("#fNotes").value = p ? p.notes : "";
+  $("#fDelete").hidden = !p;
+
+  updateTierPreview();
+  open$("#editOverlay");
+  setTimeout(() => $("#fName").focus(), 30);
+}
+
+function updateTierPreview(){
+  const raw = $("#fScore").value;
+  const box = $("#fTierPreview");
+  if (raw === ""){
+    box.textContent = "—";
+    box.style.borderColor = "";
+    return;
+  }
+  const t = tierFor(clampScore(raw));
+  box.innerHTML = `<span class="pill" style="background:${t.color}">${t.id}</span> tier (${t.min}–${t.max})`;
+  box.style.borderColor = t.color + "66";
+}
+
+$("#editForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const data = {
+    name:       $("#fName").value.trim(),
+    score:      clampScore($("#fScore").value),
+    curseforge: $("#fCf").value.trim(),
+    video:      $("#fYt").value.trim(),
+    image:      $("#fImg").value.trim(),
+    version:    $("#fVer").value.trim(),
+    notes:      $("#fNotes").value.trim(),
+    tags:       $("#fTags").value.split(",").map(s => s.trim()).filter(Boolean),
+    icon:       pendingIcon,
+    summary:    pendingSummary,
+  };
+  if (!data.name) return;
+
+  if (editingId){
+    const p = state.packs.find(x => x.id === editingId);
+    Object.assign(p, data);
+  } else {
+    const maxOrder = state.packs.reduce((m,p) => Math.max(m, p.order), 0);
+    state.packs.push(makePack({ ...data, order: maxOrder + 1, added: Date.now() }));
+  }
+  save();
+  render();
+  closeAll();
+  toast(editingId ? "Saved." : `Added “${data.name}”.`);
+});
+
+$("#fDelete").addEventListener("click", () => {
+  const p = state.packs.find(x => x.id === editingId);
+  if (!p) return;
+  if (!confirm(`Delete “${p.name}” from the tier list?`)) return;
+  state.packs = state.packs.filter(x => x.id !== editingId);
+  save();
+  render();
+  closeAll();
+  toast("Deleted.");
+});
+
+$("#fScore").addEventListener("input", updateTierPreview);
+
+function showIconState(icon, source){
+  const box = $("#fIconState");
+  if (!icon){ box.hidden = true; return; }
+  box.hidden = false;
+  $("#fIconImg").src = icon;
+  $("#fIconSrc").textContent = source || "CurseForge / Modrinth";
+}
+
+$("#fIconClear").addEventListener("click", () => {
+  pendingIcon = "";
+  showIconState("", "");
+});
+
+/* "Pull icon & version" inside the edit form. Fills the form only — nothing is
+   committed until Save, so a wrong guess is easy to back out of. */
+$("#fFetch").addEventListener("click", async () => {
+  const btn = $("#fFetch");
+  const msg = $("#fFetchMsg");
+  const probe = { name: $("#fName").value.trim(), curseforge: $("#fCf").value.trim() };
+
+  if (!probe.curseforge && !probe.name){
+    msg.textContent = "Enter a name or CurseForge URL first.";
+    return;
+  }
+
+  btn.disabled = true;
+  msg.textContent = "Looking it up…";
+  try {
+    const hit = await lookupPack(probe);
+    pendingIcon    = hit.icon || pendingIcon;
+    pendingSummary = hit.summary || pendingSummary;
+    if (hit.version) $("#fVer").value = hit.version;
+    if (!$("#fName").value.trim() && hit.name) $("#fName").value = hit.name;
+    showIconState(pendingIcon, hit.source);
+    msg.textContent = `Found “${hit.name}” on ${hit.source}`
+      + (hit.version ? ` · MC ${hit.version}` : " · no version listed");
+  } catch (err){
+    msg.textContent = fillError(err, probe);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function fillError(err, pack){
+  switch (err.message){
+    case "bad-key":          return "CurseForge rejected that API key — check it under ⚡ Auto-fill.";
+    case "not-found":        return cfKey()
+                                 ? "No match on CurseForge or Modrinth."
+                                 : "No match on Modrinth. Add a CurseForge API key for better results.";
+    case "no-confident-match": return "Only a loose name match was found — skipped to be safe.";
+    case "nothing-to-search":  return "Nothing to search on.";
+    case "no-key":             return "Needs a CurseForge API key.";
+    default:
+      return navigator.onLine === false
+        ? "You're offline."
+        : `Lookup failed (${err.message}).`;
+  }
+}
+
+$("#dEditBtn").addEventListener("click", () => {
+  const id = detailId;
+  closeAll();
+  openEdit(id);
+});
+
+/* ============================================================
+   Drag & drop  (edit mode only)
+   ============================================================ */
+let dragId = null;
+
+function wireDnD(){
+  if (!document.body.classList.contains("editing")) return;
+
+  $$(".card").forEach(card => {
+    card.draggable = true;
+    card.addEventListener("dragstart", e => {
+      dragId = card.dataset.id;
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      // Firefox needs data set for the drag to begin at all.
+      e.dataTransfer.setData("text/plain", dragId);
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+      $$(".tier").forEach(t => t.classList.remove("drop-target"));
+      dragId = null;
+    });
+  });
+
+  $$(".tier").forEach(row => {
+    row.addEventListener("dragover", e => {
+      if (!dragId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      row.classList.add("drop-target");
+    });
+    row.addEventListener("dragleave", e => {
+      if (!row.contains(e.relatedTarget)) row.classList.remove("drop-target");
+    });
+    row.addEventListener("drop", e => {
+      e.preventDefault();
+      row.classList.remove("drop-target");
+      if (!dragId) return;
+      handleDrop(dragId, row, e);
+    });
+  });
+}
+
+function handleDrop(id, row, evt){
+  const pack = state.packs.find(p => p.id === id);
+  if (!pack) return;
+
+  const targetTier = TIERS.find(t => t.id === row.dataset.tier);
+  const fromTier   = tierFor(pack.score);
+
+  if (targetTier.id !== fromTier.id){
+    // Moving between tiers means changing the score — land on the band midpoint.
+    const mid = Math.round((targetTier.min + targetTier.max) / 2);
+    pack.score = mid;
+    reorderInto(pack, row, evt);
+    save();
+    render();
+    toast(`${pack.name} → ${targetTier.id} tier, score set to ${mid}. Edit it to fine-tune.`);
+    return;
+  }
+
+  // Same tier: pure reorder, which only makes sense in custom sort.
+  reorderInto(pack, row, evt);
+  if (state.sortMode !== "custom"){
+    state.sortMode = "custom";
+    $("#sortMode").value = "custom";
+    toast("Sort switched to custom so your order sticks.");
+  }
+  save();
+  render();
+}
+
+/** Rewrite `order` values so `pack` sits where it was dropped within `row`. */
+function reorderInto(pack, row, evt){
+  const siblings = $$(".card", row)
+    .map(c => c.dataset.id)
+    .filter(cid => cid !== pack.id);
+
+  // Find the card we dropped in front of, by horizontal/vertical midpoint.
+  let insertAt = siblings.length;
+  const cards = $$(".card", row).filter(c => c.dataset.id !== pack.id);
+  for (let i = 0; i < cards.length; i++){
+    const r = cards[i].getBoundingClientRect();
+    if (evt.clientY < r.bottom && evt.clientX < r.left + r.width / 2){
+      insertAt = i;
+      break;
+    }
+  }
+  siblings.splice(insertAt, 0, pack.id);
+
+  // Renumber this tier's packs, keeping every other pack's order untouched
+  // by writing fractional-free sequential values scoped to the tier.
+  const base = TIERS.findIndex(t => t.id === row.dataset.tier) * 1000;
+  siblings.forEach((cid, i) => {
+    const p = state.packs.find(x => x.id === cid);
+    if (p) p.order = base + i;
+  });
+}
+
+/* ============================================================
+   Bulk paste import
+   ============================================================ */
+function parseBulk(text){
+  const rows = [];
+  const errors = [];
+
+  text.split(/\r?\n/).forEach((line, idx) => {
+    const raw = line.trim();
+    if (!raw) return;
+
+    // Split on | or tab first; fall back to comma only when no pipe/tab present,
+    // so commas inside names survive the common "Name | 23 | url" format.
+    let parts = /[|\t]/.test(raw)
+      ? raw.split(/\s*[|\t]\s*/)
+      : raw.split(/\s*,\s*/);
+    parts = parts.map(s => s.trim()).filter(Boolean);
+
+    const rec = { name:"", score:null, curseforge:"", video:"", leftovers:[] };
+
+    for (const part of parts){
+      if (/curseforge\.com/i.test(part) && !rec.curseforge){
+        rec.curseforge = part;
+      } else if (/(youtube\.com|youtu\.be)/i.test(part) && !rec.video){
+        rec.video = part;
+      } else if (rec.score === null && /^\d{1,2}(\.\d+)?\s*(\/\s*25)?$/.test(part)){
+        rec.score = clampScore(parseFloat(part));
+      } else {
+        rec.leftovers.push(part);
+      }
+    }
+
+    rec.name = rec.leftovers.join(" ").trim();
+    if (!rec.name){
+      errors.push(`Line ${idx+1}: couldn't find a name — skipped.`);
+      return;
+    }
+    if (rec.score === null) rec.score = 0;
+    rows.push(rec);
+  });
+
+  return { rows, errors };
+}
+
+$("#pCheck").addEventListener("click", () => {
+  const { rows, errors } = parseBulk($("#pText").value);
+  const box = $("#pPreview");
+  if (!rows.length && !errors.length){
+    box.hidden = true;
+    return;
+  }
+  const lines = rows.map(r => {
+    const t = tierFor(r.score);
+    const dupe = state.packs.some(p => p.name.toLowerCase() === r.name.toLowerCase());
+    return `${dupe ? "update" : "   new"}  [${t.id}] ${fmtScore(r.score)}/25  ${r.name}` +
+           `${r.curseforge ? "  +CF" : ""}${r.video ? "  +video" : ""}`;
+  });
+  box.hidden = false;
+  box.textContent = lines.concat(errors.length ? ["", ...errors] : []).join("\n");
+});
+
+$("#pImport").addEventListener("click", () => {
+  const { rows, errors } = parseBulk($("#pText").value);
+  if (!rows.length){
+    toast(errors[0] || "Nothing to import.");
+    return;
+  }
+  let added = 0, updated = 0;
+  let maxOrder = state.packs.reduce((m,p) => Math.max(m, p.order), 0);
+
+  for (const r of rows){
+    const existing = state.packs.find(p => p.name.toLowerCase() === r.name.toLowerCase());
+    if (existing){
+      existing.score = r.score;
+      if (r.curseforge) existing.curseforge = r.curseforge;
+      if (r.video)      existing.video      = r.video;
+      updated++;
+    } else {
+      state.packs.push(makePack({
+        name:r.name, score:r.score, curseforge:r.curseforge, video:r.video,
+        order: ++maxOrder, added: Date.now(),
+      }));
+      added++;
+    }
+  }
+  save();
+  render();
+  closeAll();
+  $("#pText").value = "";
+  $("#pPreview").hidden = true;
+  toast(`Imported — ${added} added, ${updated} updated.` + (errors.length ? ` ${errors.length} line(s) skipped.` : ""));
+});
+
+/* ============================================================
+   Bulk auto-fill
+   ============================================================ */
+$("#aKey").addEventListener("change", e => {
+  setCfKey(e.target.value.trim());
+  $("#aTestMsg").textContent = "";
+  toast(e.target.value.trim() ? "API key saved." : "API key cleared.");
+});
+
+$("#aTest").addEventListener("click", async () => {
+  setCfKey($("#aKey").value.trim());        // save whatever's typed before testing
+  const btn = $("#aTest"), msg = $("#aTestMsg");
+  btn.disabled = true;
+  msg.textContent = "Testing…";
+  const res = await testCfKey();
+  msg.textContent = (res.ok ? "✓ " : "✗ ") + res.msg;
+  msg.style.color = res.ok ? "var(--accent-2)" : "var(--danger)";
+  btn.disabled = false;
+});
+
+async function runFill(overwrite){
+  const targets = overwrite
+    ? state.packs
+    : state.packs.filter(p => !p.icon || !p.version);
+
+  const log = $("#aLog");
+  log.hidden = false;
+
+  if (!targets.length){
+    log.textContent = "Nothing to fill — every pack already has an icon and a version.";
+    return;
+  }
+
+  $("#aRun").disabled = $("#aRunAll").disabled = true;
+  const lines = [];
+  let filled = 0, skipped = 0, warnedAboutKey = false;
+
+  for (let i = 0; i < targets.length; i++){
+    const p = targets[i];
+    log.textContent = [...lines, `… ${i + 1}/${targets.length}  ${p.name}`].join("\n");
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      // Bulk runs unattended, so require a confident match before writing anything.
+      const hit = await lookupPack(p, { strict: true });
+
+      if (cfKeyRejected && !warnedAboutKey){
+        warnedAboutKey = true;
+        lines.push("⚠ CurseForge rejected your API key — continuing with Modrinth.", "");
+      }
+
+      const got = [];
+
+      if (hit.icon    && (overwrite || !p.icon))    { p.icon = hit.icon;       got.push("icon"); }
+      if (hit.version && (overwrite || !p.version)) { p.version = hit.version; got.push("MC " + hit.version); }
+      if (hit.summary && (overwrite || !p.summary)) { p.summary = hit.summary; got.push("summary"); }
+
+      if (got.length){ filled++; lines.push(`✓ ${p.name} — ${got.join(", ")}  (${hit.source})`); }
+      else           { skipped++; lines.push(`· ${p.name} — nothing new`); }
+    } catch (err){
+      skipped++;
+      lines.push(`✗ ${p.name} — ${fillError(err, p)}`);
+    }
+
+    log.textContent = lines.join("\n");
+    log.scrollTop = log.scrollHeight;
+    await sleep(250);   // be polite to both APIs
+  }
+
+  lines.push("", `Done — ${filled} updated, ${skipped} skipped.`);
+  log.textContent = lines.join("\n");
+  log.scrollTop = log.scrollHeight;
+
+  save();
+  render();
+  $("#aRun").disabled = $("#aRunAll").disabled = false;
+  toast(`Auto-fill done — ${filled} updated.`);
+}
+
+$("#aRun").addEventListener("click",    () => runFill(false));
+$("#aRunAll").addEventListener("click", () => {
+  if (confirm("Re-fetch every pack and overwrite existing icons, versions and summaries?")) runFill(true);
+});
+
+/* ============================================================
+   Backup / restore
+   ============================================================ */
+$("#bExport").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `modpack-tierlist-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("Exported.");
+});
+
+/**
+ * Write a copy of this whole page with the current list baked into it, so it
+ * can be sent to someone as a single file that just opens and works. The plain
+ * .json export only carries data; this carries the app too.
+ */
+function exportStandalone({ hosting = false } = {}){
+  const wasEditing = document.body.classList.contains("editing");
+  const searchTerm = $("#search").value;
+
+  // Neutralise the live DOM first so the copy doesn't inherit this session's
+  // rendered cards, open dialogs, scratch text or API key.
+  if (wasEditing) $("#btnEdit").click();
+  closeAll();
+  $("#search").value = "";
+  $("#tiers").innerHTML = "";
+  $("#statbar").innerHTML = "";
+  $("#aKey").value = "";
+  $("#bText").value = "";
+  $("#pText").value = "";
+  $("#aTestMsg").textContent = "";
+  $("#fFetchMsg").textContent = "";
+  $("#aLog").textContent = "";
+  $("#aLog").hidden = true;
+  $("#pPreview").hidden = true;
+  document.body.style.overflow = "";
+
+  const payload = { ...state, exportedAt: Date.now(), readOnly: hosting };
+  // Escaping "</" keeps a stray closing script tag inside someone's notes from
+  // ending the block early; "<\/" is still valid JSON, so it parses straight back.
+  $("#bakedData").textContent = JSON.stringify(payload).replace(/<\//g, "<\\/");
+
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+  // Put the working page back the way it was.
+  $("#search").value = searchTerm;
+  if (wasEditing) $("#btnEdit").click();
+  render();
+
+  const blob = new Blob([html], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = hosting
+    ? "index.html"
+    : `modpack-tierlist-${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+
+  const kb = Math.round(html.length / 1024);
+  toast(hosting
+    ? `index.html saved (${kb} KB) — upload that to your host.`
+    : `Shareable file saved (${kb} KB) — send that one.`);
+}
+
+$("#bShare").addEventListener("click", () => exportStandalone());
+$("#bHost").addEventListener("click",  () => exportStandalone({ hosting: true }));
+
+/** data.json for the hosted workflow: update the list without re-uploading the page. */
+$("#bData").addEventListener("click", () => {
+  const payload = { ...state, exportedAt: Date.now(), readOnly: true };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "data.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("data.json saved — upload it next to index.html.");
+});
+$("#bImportBtn").addEventListener("click", () => $("#bFile").click());
+
+$("#bFile").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { applyRaw(reader.result); e.target.value = ""; };
+  reader.readAsText(file);
+});
+
+$("#bApply").addEventListener("click", () => applyRaw($("#bText").value));
+
+function applyRaw(raw){
+  try{
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.packs)) throw new Error("no packs array");
+    state = normalize(parsed);
+    $("#sortMode").value = state.sortMode;
+    save();
+    render();
+    closeAll();
+    toast(`Loaded ${state.packs.length} packs.`);
+  }catch(err){
+    toast("That doesn't look like a valid tier list file.");
+  }
+}
+
+$("#bReset").addEventListener("click", () => {
+  if (!confirm("Wipe the whole list and start over? Export a backup first if you want to keep it.")) return;
+  state = blankState();
+  save();
+  render();
+  closeAll();
+  toast("Reset to the starter list.");
+});
+
+/* ============================================================
+   Modal plumbing
+   ============================================================ */
+function open$(sel){
+  $(sel).classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeAll(){
+  $$(".overlay").forEach(o => o.classList.remove("open"));
+  document.body.style.overflow = "";
+  $("#dEmbed").replaceChildren();   // stop playback
+  detailId = null;
+}
+
+$$(".overlay").forEach(o => {
+  o.addEventListener("mousedown", e => { if (e.target === o) closeAll(); });
+});
+document.addEventListener("click", e => {
+  if (e.target.closest("[data-close]")) closeAll();
+});
+
+/* ============================================================
+   Toolbar + keyboard
+   ============================================================ */
+$("#btnEdit").addEventListener("click", () => {
+  const on = document.body.classList.toggle("editing");
+  $("#btnEdit").classList.toggle("on", on);
+  $("#btnEdit").textContent = on ? "✅ Editing" : "✏️ Edit mode";
+  $("#editHint").hidden = !on;
+  $("#boardSub").textContent = on
+    ? "click a card to edit · drag to move between tiers"
+    : "click any pack for its CurseForge page & review";
+  render();
+});
+
+$("#btnAdd").addEventListener("click",   () => openEdit(null));
+$("#btnPaste").addEventListener("click", () => open$("#pasteOverlay"));
+$("#btnFill").addEventListener("click",  () => {
+  $("#aKey").value = cfKey();
+  $("#aLog").hidden = true;
+  open$("#fillOverlay");
+});
+$("#btnData").addEventListener("click",  () => {
+  $("#bText").value = JSON.stringify(state, null, 2);
+  open$("#dataOverlay");
+});
+
+$("#search").addEventListener("input", render);
+
+$("#sortMode").addEventListener("change", e => {
+  state.sortMode = e.target.value;
+  save();
+  render();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){ closeAll(); return; }
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (typing) return;
+  if (e.key === "/"){ e.preventDefault(); $("#search").focus(); }
+  if (readOnly) return;
+  if (e.key.toLowerCase() === "e"){ $("#btnEdit").click(); }
+  if (e.key.toLowerCase() === "n"){ e.preventDefault(); openEdit(null); }
+});
+
+/* ============================================================
+   Read-only (published) mode
+   ============================================================ */
+function applyReadOnly(){
+  if (!readOnly) return;
+  document.body.classList.remove("editing");
+  document.body.classList.add("readonly");
+  ["#btnEdit", "#btnAdd", "#btnPaste", "#btnFill", "#btnData", "#dEditBtn"]
+    .forEach(sel => { const el = $(sel); if (el) el.hidden = true; });
+  $("#editHint").hidden = true;
+  $("#boardSub").textContent = "click any pack for its CurseForge page & review";
+}
+
+/**
+ * When hosted, a data.json sitting next to this page wins. That way updating the
+ * list means replacing one small file instead of re-uploading the whole page.
+ * Absent or unreadable, the baked-in copy is used and nothing breaks.
+ */
+async function loadHostedData(){
+  if (!/^https?:$/.test(location.protocol)) return;
+  try{
+    const res = await fetch("data.json", { cache: "no-store" });
+    if (!res.ok) return;
+    const d = await res.json();
+    if (!d || !Array.isArray(d.packs)) return;
+
+    const wasReadOnly = readOnly;
+    state = normalize(d);
+    // data.json may set readOnly itself; otherwise keep the build's setting.
+    readOnly = ("readOnly" in d) ? !!d.readOnly : wasReadOnly;
+    applyReadOnly();
+    $("#sortMode").value = state.sortMode;
+    render();
+  }catch(err){
+    // No data.json, bad JSON, or blocked - the baked copy already rendered.
+    console.info("No usable data.json alongside this page; using the built-in list.");
+  }
+}
+
+/* ============================================================
+   Go
+   ============================================================ */
+state = load();
+readOnly = !!state.readOnly;
+applyReadOnly();
+$("#sortMode").value = state.sortMode;
+render();
+loadHostedData();
+</script>
+
+
+</body></html>
