@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sortMode": "score",
-  "exportedAt": 1786248197328,
+  "exportedAt": 1786249713830,
   "readOnly": true,
   "packs": [
     {
@@ -709,7 +709,7 @@
       "added": 1786086338968
     },
     {
-      "id": "pfye44mhk",
+      "id": "pfjsw6ssm",
       "name": "ZOMBIEMANIA - A Modern Zombie Apocalypse",
       "score": 18,
       "curseforge": "https://www.curseforge.com/minecraft/modpacks/zombiemania",
@@ -720,8 +720,23 @@
       "notes": "",
       "version": "1.20.1",
       "tags": [],
-      "order": 43,
-      "added": 1786086361997
+      "order": 44,
+      "added": 1786249324815
+    },
+    {
+      "id": "pqpfjbycd",
+      "name": "Vampires Strike Back",
+      "score": 21,
+      "curseforge": "https://www.curseforge.com/minecraft/modpacks/vampires-strike-back",
+      "video": "https://www.youtube.com/shorts/-YvT4DAzIT8?feature=share",
+      "image": "",
+      "icon": "https://media.forgecdn.net/avatars/thumbnails/1830/112/256/256/639154943273143696_animated.gif",
+      "summary": "Fast-paced gothic Roguelike where you fight increasingly challenging Illagers as a Vampire!",
+      "notes": "",
+      "version": "1.20.1",
+      "tags": [],
+      "order": 45,
+      "added": 1786249370255
     }
   ]
 }
