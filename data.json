@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sortMode": "score",
-  "exportedAt": 1786249713830,
+  "exportedAt": 1787425972852,
   "readOnly": true,
   "packs": [
     {
@@ -737,6 +737,21 @@
       "tags": [],
       "order": 45,
       "added": 1786249370255
+    },
+    {
+      "id": "phdxqe30f",
+      "name": "Soulrend - Dark Fantasy RPG Soulslike",
+      "score": 19,
+      "curseforge": "https://www.curseforge.com/minecraft/modpacks/soulrend",
+      "video": "https://www.youtube.com/shorts/RYyX2hwSvaY?feature=share",
+      "image": "",
+      "icon": "https://media.forgecdn.net/avatars/thumbnails/1947/377/256/256/639207879652681074.png",
+      "summary": "Forge 1.20.1 | A soulslike action RPG adventure with epic combat, quests, bosses, factions, and more",
+      "notes": "",
+      "version": "1.20.1",
+      "tags": [],
+      "order": 46,
+      "added": 1787425951839
     }
   ]
 }
