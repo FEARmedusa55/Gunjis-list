@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sortMode": "score",
-  "exportedAt": 1787425972852,
+  "exportedAt": 1789187445618,
   "readOnly": true,
   "packs": [
     {
@@ -752,6 +752,36 @@
       "tags": [],
       "order": 46,
       "added": 1787425951839
+    },
+    {
+      "id": "p9c8coq86",
+      "name": "All the Mods 10 - ATM10",
+      "score": 25,
+      "curseforge": "https://www.curseforge.com/minecraft/modpacks/all-the-mods-10",
+      "video": "https://youtu.be/Co8mtKe3I5w",
+      "image": "",
+      "icon": "https://media.forgecdn.net/avatars/thumbnails/1182/438/256/256/638755918649288941.png",
+      "summary": "The top pack of 2026 with around 500 mods! Tons of quests and a proper endgame. ",
+      "notes": "",
+      "version": "1.21.1",
+      "tags": [],
+      "order": 47,
+      "added": 1789187349576
+    },
+    {
+      "id": "pqj63fais",
+      "name": "After The Nukes",
+      "score": 17,
+      "curseforge": "https://www.curseforge.com/minecraft/modpacks/after-the-nukes",
+      "video": "https://www.youtube.com/shorts/bzuni3U2ikI",
+      "image": "",
+      "icon": "https://media.forgecdn.net/avatars/thumbnails/1688/335/256/256/639071998510177191.png",
+      "summary": "Begin a true Fallout adventure in a devastated wasteland world with extremely high difficulty, Trading, Factions, and Quests.",
+      "notes": "",
+      "version": "1.20.1",
+      "tags": [],
+      "order": 48,
+      "added": 1789187409811
     }
   ]
 }
