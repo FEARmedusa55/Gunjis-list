@@ -1,7 +1,7 @@
 {
   "version": 1,
   "sortMode": "score",
-  "exportedAt": 1789187445618,
+  "exportedAt": 1791307926060,
   "readOnly": true,
   "packs": [
     {
@@ -782,6 +782,21 @@
       "tags": [],
       "order": 48,
       "added": 1789187409811
+    },
+    {
+      "id": "pa08qsp6t",
+      "name": "All the Mods 10 Aeronautics ATM10A",
+      "score": 23,
+      "curseforge": "https://www.curseforge.com/minecraft/modpacks/all-the-mods-10-aeronautics",
+      "video": "https://www.youtube.com/shorts/DR6u40FUmc4?feature=share",
+      "image": "",
+      "icon": "https://media.forgecdn.net/avatars/thumbnails/1992/863/256/256/639226851425896647.png",
+      "summary": "ATM10.5! With a hint of Aeronautics ;)",
+      "notes": "",
+      "version": "1.21.1",
+      "tags": [],
+      "order": 49,
+      "added": 1791307906331
     }
   ]
 }
